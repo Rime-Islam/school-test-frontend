@@ -9,12 +9,12 @@ const authApi = baseApi.injectEndpoints({
         url: "/auth/login",
         method: "POST",
         body: credentials,
-        credentials: "include", 
+        credentials: "include",
       }),
       invalidatesTags: [tagTypes.auth],
     }),
 
-    // logout 
+    // logout
     logoutUser: builder.mutation<void, void>({
       query: () => ({
         url: "/auth/logout",
@@ -22,24 +22,6 @@ const authApi = baseApi.injectEndpoints({
         credentials: "include",
       }),
       invalidatesTags: [tagTypes.auth],
-    }),
-
-    // register user
-    registerUser: builder.mutation({
-      query: (data) => ({
-        url: "/auth/register",
-        method: "POST",
-        body: data,
-      }),
-    }),
-
-    // verify email 
-    verifyEmailOtp: builder.mutation({
-      query: (data) => ({
-        url: "/auth/verify-email",
-        method: "POST",
-        body: data,
-      }),
     }),
 
     // forget pass request
@@ -61,7 +43,7 @@ const authApi = baseApi.injectEndpoints({
     }),
 
     // refresh token
-    refreshToken: builder.mutation<{ accessToken: string }, void>({
+    refreshToken: builder.mutation({
       query: () => ({
         url: "/auth/refresh-token",
         method: "POST",
@@ -70,14 +52,13 @@ const authApi = baseApi.injectEndpoints({
       invalidatesTags: [tagTypes.auth],
     }),
 
-    // current user
-    getCurrentUser: builder.query({
-      query: () => ({
-        url: "/auth/me",
-        method: "GET",
-        credentials: "include",
+    // change password
+    changePassword: builder.mutation({
+      query: (data) => ({
+        url: "/auth/change-password",
+        method: "PUT",
+        body: data,
       }),
-      providesTags: [tagTypes.auth],
     }),
   }),
 });
@@ -85,10 +66,8 @@ const authApi = baseApi.injectEndpoints({
 export const {
   useLoginUserMutation,
   useLogoutUserMutation,
-  useRegisterUserMutation,
-  useVerifyEmailOtpMutation,
   useRequestForgotPasswordOtpMutation,
   useResetPasswordWithOtpMutation,
   useRefreshTokenMutation,
-  useGetCurrentUserQuery,
+  useChangePasswordMutation,
 } = authApi;
