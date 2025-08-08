@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { tagTypesList } from "../tag-type";
 
 const axiosInstance = axios.create({
+  // baseURL: "https://school-backend-swart.vercel.app/api/v1",
   baseURL: "http://localhost:5001/api/v1",
   withCredentials: true,
 });
@@ -13,7 +14,7 @@ const axiosBaseQuery: BaseQueryFn<
   string | AxiosRequestConfig,
   unknown,
   { status: number; data: any }
-> = async (args, api, extraOptions) => {
+> = async (args, api) => {
   try {
     const token = (api.getState() as RootState).auth.token;
 
