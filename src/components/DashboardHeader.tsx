@@ -1,7 +1,12 @@
 import { Link } from "react-router-dom"; 
 import { Bell, Menu, Search, University } from "lucide-react";
+import { useCurrentRole } from "../redux/features/auth/authSlice";
+import { useAppSelector } from "../redux/hook";
 
 export function DashboardHeader() {
+  const role = useAppSelector(useCurrentRole);
+  const Role = role ? role.charAt(0).toUpperCase() + role.slice(1).toLowerCase() : '';
+  
   return (
     <header className="sticky top-0 z-30 w-full border-b bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="mx-auto flex h-14 max-w-7xl items-center gap-3 px-4">
@@ -13,7 +18,7 @@ export function DashboardHeader() {
         <Link to="/" className="flex items-center gap-2">
        <University className="h-6 w-6 text-emerald-600 rounded" />
           <span className="hidden text-sm font-semibold sm:inline">
-            User Dashboard
+            {Role} Dashboard
           </span>
         </Link>
 

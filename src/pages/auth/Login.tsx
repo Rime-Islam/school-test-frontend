@@ -186,7 +186,7 @@ const Login = () => {
           </form>
 
           <p className="text-center text-xs text-neutral-500">
-            Don't have an account?{" "}
+            Don't have an account?
             <Link
               to="/auth/register"
               className="font-medium text-blue-600 hover:underline"

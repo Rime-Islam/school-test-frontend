@@ -7,8 +7,13 @@ import Login from "../pages/auth/Login";
 import VerifyEmail from "../pages/auth/VerifyEmail";
 import ForgetPassword from "../pages/auth/ForgetPassword";
 import ResetPassword from "../pages/auth/ResetPassword";
-import { UserDashboard } from "../pages/user/UserDashboard";
-import User from "../pages/user/User";
+import { UserDashboard } from "../pages/student/UserDashboard";
+import User from "../pages/student/User";
+import ChangePassword from "../components/ChangePassword";
+import AdminDashboard from "../pages/admin/AdminDashboard";
+import AllUsers from "../pages/admin/AllUsers";
+import CreateQuestion from "../pages/admin/CreateQuestion";
+import AllQuestion from "../pages/admin/AllQuestion";
 
 const router = createBrowserRouter([
   {
@@ -46,12 +51,38 @@ const router = createBrowserRouter([
     ],
   },
   {
-    path: "/user/dashboard",
+    path: "/student/dashboard",
     element: <UserDashboard/>,
     children: [
       {
-        path: "/user/dashboard/user",
+        path: "/student/dashboard/user",
         element: <User />,
+      },
+      {
+        path: "/student/dashboard/change-password",
+        element: <ChangePassword />,
+      },
+    ],
+  },
+  {
+    path: "/admin/dashboard",
+    element: <AdminDashboard/>,
+    children: [
+      {
+        path: "/admin/dashboard/change-password",
+        element: <ChangePassword />,
+      },
+      {
+        path: "/admin/dashboard/user",
+        element: <AllUsers />,
+      },
+      {
+        path: "/admin/dashboard/create-question",
+        element: <CreateQuestion/>,
+      },
+      {
+        path: "/admin/dashboard/questions",
+        element: <AllQuestion />,
       },
     ],
   },
