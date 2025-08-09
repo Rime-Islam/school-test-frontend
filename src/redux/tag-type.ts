@@ -1,5 +1,5 @@
 export const tagTypes = {
-  users: "users",
+  question: "question",
   auth: "auth",
 
 }

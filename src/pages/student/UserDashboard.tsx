@@ -1,10 +1,10 @@
 import { Outlet, useNavigate } from "react-router-dom";
-import { DashboardHeader } from "../../components/DashboardHeader";
-import { DashboardSidebar } from "../../components/DashboardSidebar";
 import { useLogoutUserMutation } from "../../redux/features/auth/authApi";
 import { useAppDispatch } from "../../redux/hook";
 import { logout } from "../../redux/features/auth/authSlice";
 import { toast } from "sonner";
+import { DashboardHeader } from "../../components/dashboard/DashboardHeader";
+import { DashboardSidebar } from "../../components/dashboard/DashboardSidebar";
 
 export function UserDashboard() {
   const [logoutUser] = useLogoutUserMutation();

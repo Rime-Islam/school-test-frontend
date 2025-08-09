@@ -1,6 +1,6 @@
 import { BadgeCheck, BarChart3, Home, Layers, Settings, Users, Wrench } from "lucide-react";
-import { useAppSelector } from "../redux/hook";
-import { useCurrentRole } from "../redux/features/auth/authSlice";
+import { useAppSelector } from "../../redux/hook";
+import { useCurrentRole } from "../../redux/features/auth/authSlice";
 
 const roleBasedItems = {
   student: [
@@ -14,8 +14,8 @@ const roleBasedItems = {
   admin: [
     { label: "Overview", href: "/admin/dashboard", icon: "Home", active: true },
     { label: "Users", href: "/admin/dashboard/user", icon: "Users" },
+     { label: "All Question", href: "/admin/dashboard/questions", icon: "BarChart3" },
     { label: "Create Question", href: "/admin/dashboard/create-question", icon: "Layers" },
-    { label: "All Question", href: "/admin/dashboard/questions", icon: "BarChart3" },
     { label: "Change Password", href: "/admin/dashboard/change-password", icon: "BadgeCheck" },
     { label: "Admin Tools", href: "/admin/dashboard", icon: "Tool" },
     { label: "Settings", href: "/admin/dashboard", icon: "Settings" },
@@ -35,7 +35,7 @@ const iconMap = {
   BarChart3,
   Settings,
   BadgeCheck,
-  Tool: Wrench, // Map "Tool" to Wrench icon
+  Tool: Wrench,
 };
 
 export function DashboardSidebar() {
@@ -44,12 +44,12 @@ export function DashboardSidebar() {
   const items = formattedRole ? roleBasedItems[formattedRole as keyof typeof roleBasedItems] || [] : [];
   
   return (
-    <nav className="rounded-lg border bg-white p-2 text-gray-900 shadow-sm">
+    <nav className="rounded-lg border border-gray-300 bg-white p-2 text-gray-900 shadow-sm">
       <div className="px-2 py-1.5 text-xs font-medium text-gray-500">Main</div>
       <ul className="space-y-1">
         {items.map((item) => {
           const Icon = iconMap[item.icon as keyof typeof iconMap];
-          if (!Icon) return null; // Skip if icon not found
+          if (!Icon) return null; 
           
           return (
             <li key={item.label}>
@@ -69,7 +69,7 @@ export function DashboardSidebar() {
         })}
       </ul>
 
-      <div className="mt-4 rounded-md border bg-gray-100 p-3 text-xs text-gray-500">
+      <div className="mt-4 rounded-md border border-gray-300  bg-gray-100 p-3 text-xs text-gray-500">
         <div className="mb-1 font-medium text-gray-900">Supervisor Access Needed?</div>
         <p className="mb-2">Elevate your account to supervisor status for advanced controls.</p>
         <p className="inline-flex h-8 items-center justify-center rounded-md bg-emerald-600 px-2.5 text-xs font-medium text-white hover:bg-emerald-700">

@@ -12,8 +12,8 @@ import User from "../pages/student/User";
 import ChangePassword from "../components/ChangePassword";
 import AdminDashboard from "../pages/admin/AdminDashboard";
 import AllUsers from "../pages/admin/AllUsers";
-import CreateQuestion from "../pages/admin/CreateQuestion";
-import AllQuestion from "../pages/admin/AllQuestion";
+import CreateQuestion from "../pages/admin/question/CreateQuestion";
+import AllQuestion from "../pages/admin/question/AllQuestion";
 
 const router = createBrowserRouter([
   {
