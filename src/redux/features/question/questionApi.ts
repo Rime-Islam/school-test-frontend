@@ -15,7 +15,15 @@ const questionApi = baseApi.injectEndpoints({
       query: (params) => ({
         url: "/question",
         method: "GET",
-        params, 
+        params,
+      }),
+      providesTags: [tagTypes.question],
+    }),
+
+    getQuestionById: builder.query({
+      query: (id: string) => ({
+        url: `/question/${id}`,
+        method: "GET",
       }),
       providesTags: [tagTypes.question],
     }),
@@ -42,6 +50,7 @@ const questionApi = baseApi.injectEndpoints({
 export const {
   useCreateQuestionMutation,
   useGetAllQuestionsQuery,
+  useGetQuestionByIdQuery,
   useUpdateQuestionMutation,
   useDeleteQuestionMutation,
 } = questionApi;

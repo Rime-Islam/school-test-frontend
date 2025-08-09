@@ -14,6 +14,7 @@ import AdminDashboard from "../pages/admin/AdminDashboard";
 import AllUsers from "../pages/admin/AllUsers";
 import CreateQuestion from "../pages/admin/question/CreateQuestion";
 import AllQuestion from "../pages/admin/question/AllQuestion";
+import EditQuestion from "../components/question/EditQuestion";
 
 const router = createBrowserRouter([
   {
@@ -83,6 +84,10 @@ const router = createBrowserRouter([
       {
         path: "/admin/dashboard/questions",
         element: <AllQuestion />,
+      },
+      {
+        path: "/admin/dashboard/questions/:id",
+        element: <EditQuestion />,
       },
     ],
   },

@@ -1,15 +1,25 @@
 import { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { Plus, Trash2 } from 'lucide-react';
-import { useCreateQuestionMutation } from '../../redux/features/question/questionApi';
-import type { CreateQuestionPayload, QuestionFormData } from '../../interface/question.interface';
+import {
+    useGetQuestionByIdQuery,
+  useUpdateQuestionMutation,
+} from '../../redux/features/question/questionApi';
+import type { QuestionFormData, CreateQuestionPayload } from '../../interface/question.interface';
 
 const COMPETENCIES = ["grammar", "vocabulary", "writing"];
 const LEVELS = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
 const MAX_OPTIONS = 8;
 
-export default function QuestionForm() {
-  const [createQuestion, { isLoading, isError, isSuccess }] = useCreateQuestionMutation();
+export default function EditQuestion() {
+  const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+
+  const { data: questionData, isLoading: isFetching } = useGetQuestionByIdQuery(id as string, { skip: !id });
+  const [updateQuestion, { isLoading: isUpdating, isSuccess, isError }] = useUpdateQuestionMutation();
+  const question = questionData?.data;
+
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const {
@@ -19,7 +29,7 @@ export default function QuestionForm() {
     watch,
     setValue,
     reset,
-    formState: { errors, isDirty }
+    formState: { errors }
   } = useForm<QuestionFormData>({
     defaultValues: {
       text: '',
@@ -40,15 +50,25 @@ export default function QuestionForm() {
   const options = watch('options');
   const canAddOption = fields.length < MAX_OPTIONS;
 
-  useEffect(() => {
-    if (isSuccess) {
-      reset();
-      const timer = setTimeout(() => {
-        // Reset success state after 3 seconds
-      }, 3000);
-      return () => clearTimeout(timer);
-    }
-  }, [isSuccess, reset]);
+  // Populate form when data is fetched
+useEffect(() => {
+  if (question) {
+    const correctIndexFromApi = question.options.findIndex(
+      (opt: any) => opt.isCorrect
+    );
+
+    reset({
+      text: question.text,
+      competency: question.competency,
+      level: question.level,
+      timeLimit: question.timeLimit,
+      options: question.options.map((opt: any) => ({
+        text: opt.text
+      })),
+      correctIndex: correctIndexFromApi >= 0 ? correctIndexFromApi : -1
+    });
+  }
+}, [question, reset]);
 
   const onSubmit = async (data: QuestionFormData) => {
     if (data.correctIndex < 0 || data.correctIndex >= data.options.length) {
@@ -61,31 +81,34 @@ export default function QuestionForm() {
       competency: data.competency,
       level: data.level,
       timeLimit: data.timeLimit,
-      options: data.options.map((option, index) => ({
+      options: data?.options?.map((option, index) => ({
         text: option.text,
         isCorrect: index === data.correctIndex
       }))
     };
 
     try {
-      await createQuestion(payload).unwrap();
+      await updateQuestion({ id: id, data: payload }).unwrap();
       setErrorMessage(null);
     } catch (error: any) {
-      setErrorMessage(error.data?.message || 'Failed to create question');
+      setErrorMessage(error.data?.message || 'Failed to update question');
     }
   };
 
+  if (isFetching) {
+    return <div className="p-6">Loading question...</div>;
+  }
+
   return (
     <div className="max-w-3xl mx-auto p-6 border border-gray-200 bg-white rounded-lg shadow-md">
-      <h2 className="text-xl font-bold">New Question</h2>
-      <p className='text-xs text-gray-500 font-semibold'>Define the question, answers, level, and time limit.</p>
+      <h2 className="text-xl font-bold">Edit Question</h2>
+      <p className='text-xs text-gray-500 font-semibold'>Modify the question, answers, level, and time limit.</p>
       
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 mt-4">
         {/* Question Text */}
         <div>
           <label className="block text-sm font-medium mb-1">Question</label>
           <textarea
-          placeholder='Enter the question text ...'
             {...register('text', { required: 'Question text is required' })}
             className="w-full text-sm p-2 border border-gray-200 rounded focus:ring-2 focus:ring-gray-300"
             rows={4}
@@ -102,7 +125,7 @@ export default function QuestionForm() {
               className="w-full p-2 border border-gray-300 rounded text-sm"
             >
               {COMPETENCIES.map((comp) => (
-                <option key={comp} value={comp} className='text-sm'>
+                <option key={comp} value={comp}>
                   {comp.charAt(0).toUpperCase() + comp.slice(1)}
                 </option>
               ))}
@@ -117,7 +140,7 @@ export default function QuestionForm() {
               className="w-full p-2 border border-gray-300 text-sm rounded"
             >
               {LEVELS.map((level) => (
-                <option key={level} value={level} className='text-sm'>
+                <option key={level} value={level}>
                   {level}
                 </option>
               ))}
@@ -143,20 +166,16 @@ export default function QuestionForm() {
         {/* Options Section */}
         <div>
           <label className="block text-sm font-medium mb-1">Options (choose one correct)</label>
-          
           <div className="space-y-3">
             {fields.map((field, index) => (
               <div key={field.id} className="border border-gray-300 rounded-lg p-3 bg-white">
                 <div className="flex items-center gap-3">
-                  {/* Radio Input */}
                   <input
                     type="radio"
                     checked={correctIndex === index}
                     onChange={() => setValue('correctIndex', index, { shouldValidate: true })}
                     className="h-4 w-4 text-gray-300 focus:ring-gray-400"
                   />
-                  
-                  {/* Option Input */}
                   <div className="flex-1">
                     <input
                       {...register(`options.${index}.text`, { required: 'Option cannot be empty' })}
@@ -167,8 +186,6 @@ export default function QuestionForm() {
                       <p className="mt-1 text-sm text-red-600">{errors.options[index]?.text?.message}</p>
                     )}
                   </div>
-                  
-                  {/* Delete Button */}
                   <button
                     type="button"
                     onClick={() => {
@@ -186,19 +203,14 @@ export default function QuestionForm() {
                     <Trash2 className="h-4 w-4" />
                   </button>
                 </div>
-                <p className="mt-2 text-xs text-gray-500">
-                  <span className="font-medium">Tip:</span> Select the radio button to mark as correct.
-                </p>
               </div>
             ))}
           </div>
 
-          {/* Options Error Messages */}
           {errorMessage && (
             <p className="mt-2 text-sm text-red-600">{errorMessage}</p>
           )}
 
-          {/* Add Option Button */}
           <div className="flex items-center justify-between mt-4">
             <button
               type="button"
@@ -219,30 +231,29 @@ export default function QuestionForm() {
         <div className="flex gap-3 justify-end items-center pt-4 border-t">
           <button
             type="button"
-            onClick={() => reset()}
-            disabled={!isDirty}
-            className="px-4 py-2 text-sm text-gray-900 hover:bg-gray-300 hover:rounded  font-semibold disabled:text-gray-500"
+            onClick={() => navigate(-1)}
+            className="px-4 py-2 text-sm text-gray-900 hover:bg-gray-300 hover:rounded font-semibold"
           >
-            Reset
+            Cancel
           </button>
           <button
             type="submit"
-            disabled={isLoading}
+            disabled={isUpdating}
             className="px-4 py-2 bg-gray-800 text-white rounded hover:bg-gray-700 disabled:bg-gray-300"
           >
-            {isLoading ? 'Saving...' : 'Save Question'}
+            {isUpdating ? 'Updating...' : 'Update Question'}
           </button>
         </div>
 
         {/* Status Messages */}
         {isSuccess && (
           <div className="p-3 bg-green-100 text-green-700 rounded">
-            Question saved successfully!
+            Question updated successfully!
           </div>
         )}
         {isError && !errorMessage && (
           <div className="p-3 bg-red-100 text-red-700 rounded">
-            Failed to save question
+            Failed to update question
           </div>
         )}
       </form>
