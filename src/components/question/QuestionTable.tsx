@@ -266,7 +266,6 @@ const QuestionTable = () => {
             limit={pagination.limit}
             page={pagination.page}
             setPage={(page) => setPagination((prev) => ({ ...prev, page }))}
-            setLimit={(limit) => setPagination((prev) => ({ ...prev, limit }))}
             total={data.meta.total}
           />
         )}

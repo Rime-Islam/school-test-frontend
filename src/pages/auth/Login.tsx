@@ -45,7 +45,7 @@ const Login = () => {
         toast.success("Login successful");
 
         if(role === 'student') {
-            navigate("/user/dashboard");
+            navigate("/student/dashboard");
         } else if (role === "admin") {
             navigate("/admin/dashboard");
         } else if (role === "supervisor") {

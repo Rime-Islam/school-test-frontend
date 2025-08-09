@@ -1,6 +1,7 @@
 export const tagTypes = {
   question: "question",
   auth: "auth",
+  assessment: "assessment",
 
 }
 

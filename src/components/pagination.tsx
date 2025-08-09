@@ -5,7 +5,6 @@ interface PaginationProps {
   limit: number;
   page: number;
   setPage: (page: number) => void;
-  setLimit: (limit: number) => void;
   total: number;
 }
 
@@ -13,7 +12,6 @@ const PaginationWithButton = ({
   limit,
   page,
   setPage,
-  setLimit,
   total,
 }: PaginationProps) => {
   const lastPage = Math.ceil(total / limit);

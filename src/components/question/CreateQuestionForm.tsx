@@ -37,7 +37,7 @@ export default function QuestionForm() {
   });
 
   const correctIndex = watch('correctIndex');
-  const options = watch('options');
+//   const options = watch('options');
   const canAddOption = fields.length < MAX_OPTIONS;
 
   useEffect(() => {

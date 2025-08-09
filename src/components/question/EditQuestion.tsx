@@ -47,7 +47,7 @@ export default function EditQuestion() {
   });
 
   const correctIndex = watch('correctIndex');
-  const options = watch('options');
+//   const options = watch('options');
   const canAddOption = fields.length < MAX_OPTIONS;
 
   // Populate form when data is fetched

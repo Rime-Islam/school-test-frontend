@@ -5,8 +5,7 @@ import { useCurrentRole } from "../../redux/features/auth/authSlice";
 const roleBasedItems = {
   student: [
     { label: "Overview", href: "/student/dashboard", icon: "Home", active: true },
-    { label: "Users", href: "/student/dashboard/user", icon: "Users" },
-    { label: "Text", href: "/student/dashboard/test", icon: "Layers" },
+    { label: "Assessment", href: "/student/dashboard/assessment", icon: "Layers" },
     { label: "Certificates", href: "/student/dashboard/certificate", icon: "BarChart3" },
     { label: "Change Password", href: "/student/dashboard/change-password", icon: "BadgeCheck" },
     { label: "Settings", href: "/student/dashboard", icon: "Settings" },

@@ -8,13 +8,13 @@ import VerifyEmail from "../pages/auth/VerifyEmail";
 import ForgetPassword from "../pages/auth/ForgetPassword";
 import ResetPassword from "../pages/auth/ResetPassword";
 import { UserDashboard } from "../pages/student/UserDashboard";
-import User from "../pages/student/User";
 import ChangePassword from "../components/ChangePassword";
 import AdminDashboard from "../pages/admin/AdminDashboard";
 import AllUsers from "../pages/admin/AllUsers";
 import CreateQuestion from "../pages/admin/question/CreateQuestion";
 import AllQuestion from "../pages/admin/question/AllQuestion";
 import EditQuestion from "../components/question/EditQuestion";
+import AssessmentPage from "../pages/student/assessment/Assessment";
 
 const router = createBrowserRouter([
   {
@@ -56,12 +56,12 @@ const router = createBrowserRouter([
     element: <UserDashboard/>,
     children: [
       {
-        path: "/student/dashboard/user",
-        element: <User />,
-      },
-      {
         path: "/student/dashboard/change-password",
         element: <ChangePassword />,
+      },
+      {
+        path: "/student/dashboard/assessment",
+        element: <AssessmentPage />,
       },
     ],
   },
