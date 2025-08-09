@@ -10,9 +10,7 @@ const items = [
   { label: "Profile", href: "/user/dashboard/profile", icon: "BadgeCheck" },
   { label: "Settings", href: "#", icon: "Settings" },
 ];
-
-export function DashboardSidebar() {
-    const iconMap = {
+  const iconMap = {
   Home,
   Users,
   Layers,
@@ -20,6 +18,8 @@ export function DashboardSidebar() {
   Settings,
   BadgeCheck,
 };
+export function DashboardSidebar() {
+  
   return (
     <nav
       className={
@@ -29,7 +29,7 @@ export function DashboardSidebar() {
       <div className="px-2 py-1.5 text-xs font-medium text-gray-500">Main</div>
       <ul className="space-y-1">
         {items.map((item) => {
-          const Icon = iconMap[item?.icon];
+          const Icon = iconMap[item.icon as keyof typeof iconMap];
           return (
             <li key={item.label}>
               <a
