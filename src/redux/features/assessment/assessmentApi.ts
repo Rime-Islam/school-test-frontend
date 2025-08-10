@@ -21,14 +21,6 @@ const assessmentSessionApi = baseApi.injectEndpoints({
       providesTags: [tagTypes.assessment],
     }),
 
-    getAssessmentSessionById: builder.query({
-      query: (id: string) => ({
-        url: `/assessment/${id}`,
-        method: "GET",
-      }),
-      providesTags: [tagTypes.assessment],
-    }),
-
     getAssessmentSessionsByUser: builder.mutation({
       query: () => ({
         url: "/assessment/user",
@@ -37,57 +29,25 @@ const assessmentSessionApi = baseApi.injectEndpoints({
       invalidatesTags: [tagTypes.assessment],
     }),
 
-    updateAssessmentSession: builder.mutation({
-      query: ({ id, ...updatedData }) => ({
-        url: `/assessment/${id}`,
-        method: "PATCH",
-        body: updatedData,
-      }),
-      invalidatesTags: [tagTypes.assessment],
-    }),
-
-    deleteAssessmentSession: builder.mutation({
+    getResult: builder.mutation({
       query: (id) => ({
         url: `/assessment/${id}`,
-        method: "DELETE",
+        method: "PATCH",
       }),
       invalidatesTags: [tagTypes.assessment],
     }),
 
-    addAnswerToSession: builder.mutation({
-      query: ({ sessionId, answer }) => ({
-        url: `/assessment/${sessionId}/answers`,
-        method: "POST",
-        body: answer,
-      }),
-      invalidatesTags: [tagTypes.assessment],
+    getUserAssessmentSessions: builder.query({
+      query: () => "/assessment/user",
+      providesTags: ["AssessmentSession"],
     }),
-
-    completeAssessmentSession: builder.mutation({
-      query: ({ sessionId, results }) => ({
-        url: `/assessment/${sessionId}/complete`,
-        method: "POST",
-        body: { results },
-      }),
-      invalidatesTags: [tagTypes.assessment],
-    }),
-
-     getUserAssessmentSessions: builder.query({
-      query: () => '/assessment/user',
-      providesTags: ['AssessmentSession'],
-    }),
-
   }),
 });
 
 export const {
   useCreateAssessmentSessionMutation,
   useGetAllAssessmentSessionsQuery,
-  useGetAssessmentSessionByIdQuery,
   useGetAssessmentSessionsByUserMutation,
-  useUpdateAssessmentSessionMutation,
-  useDeleteAssessmentSessionMutation,
-  useAddAnswerToSessionMutation,
-  useCompleteAssessmentSessionMutation,
   useGetUserAssessmentSessionsQuery,
+  useGetResultMutation
 } = assessmentSessionApi;
