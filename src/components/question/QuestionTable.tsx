@@ -152,7 +152,7 @@ const QuestionTable = () => {
                 <th
                   key={header}
                   scope="col"
-                  className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider select-none"
+                  className="px-1 py-1 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider select-none"
                 >
                   {header}
                 </th>
@@ -162,13 +162,13 @@ const QuestionTable = () => {
           <tbody className="bg-white divide-y divide-gray-200">
             {isLoading ? (
               <tr>
-                <td colSpan={8} className="px-6 py-8 text-center text-gray-500">
+                <td colSpan={8} className="px-2 py-4 text-center text-gray-500">
                   Loading questions...
                 </td>
               </tr>
             ) : data?.data?.length === 0 ? (
               <tr>
-                <td colSpan={8} className="px-6 py-8 text-center text-gray-500">
+                <td colSpan={8} className="px-2 py-4 text-center text-gray-500">
                   No questions found
                 </td>
               </tr>
@@ -178,25 +178,25 @@ const QuestionTable = () => {
                   key={question._id}
                   className="hover:bg-gray-50 transition-colors duration-150"
                 >
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-700">
+                  <td className="px-2 py-1 whitespace-nowrap text-sm font-medium text-gray-700">
                     {index + 1}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap capitalize text-sm text-gray-600">
+                  <td className="px-2 py-1 whitespace-nowrap capitalize text-sm text-gray-600">
                     {question.createdBy.name}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap capitalize text-sm text-gray-600">
-                    {question.text}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap capitalize text-sm text-gray-600">
+           <td className="px-2 py-1 max-w-48 overflow-hidden break-words capitalize text-sm text-gray-600">
+  {question.text}
+</td>
+                  <td className="px-2 py-1 whitespace-nowrap capitalize text-sm text-gray-600">
                     {question.competency}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                  <td className="px-2 py-1 whitespace-nowrap text-sm text-gray-600">
                     {question.level}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                  <td className="px-2 py-1 whitespace-nowrap text-sm text-gray-600">
                     {question.timeLimit}s
                   </td>
-                  <td className="px-6 py-4 max-w-xs whitespace-normal text-sm text-gray-700">
+                  <td className="px-2 py-1 max-w-xs whitespace-normal text-sm text-gray-700">
                     <div className="flex flex-col gap-1">
                       {question.options.map((option, i) => (
                         <span
@@ -212,14 +212,14 @@ const QuestionTable = () => {
                       ))}
                     </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                  <td className="px-2 py-1 whitespace-nowrap text-right text-sm font-medium">
                     <div className="flex items-center justify-end gap-2 relative">
                       <Link
                         to={`/admin/dashboard/questions/${question._id}`}
                         className="p-2 text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded transition"
                         aria-label="Edit question"
                       >
-                        <Edit2Icon className="w-5 h-5" />
+                        <Edit2Icon className="w-4 h-4" />
                       </Link>
                       <button
                         onClick={() =>
@@ -232,7 +232,7 @@ const QuestionTable = () => {
                         className="p-2 text-red-600 hover:text-red-800 hover:bg-red-50 rounded transition"
                         aria-label="Delete question"
                       >
-                        <Trash2Icon className="w-5 h-5" />
+                        <Trash2Icon className="w-4 h-4" />
                       </button>
 
                       {/* Confirmation Popup */}

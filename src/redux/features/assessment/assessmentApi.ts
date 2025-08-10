@@ -29,14 +29,14 @@ const assessmentSessionApi = baseApi.injectEndpoints({
       providesTags: [tagTypes.assessment],
     }),
 
-    getAssessmentSessionsByUser: builder.query({
-      query: (userId: string) => ({
-        url: `/assessment/user/${userId}`,
-        method: "GET",
+    getAssessmentSessionsByUser: builder.mutation({
+      query: () => ({
+        url: "/assessment/user",
+        method: "POST",
       }),
-      providesTags: [tagTypes.assessment],
+      invalidatesTags: [tagTypes.assessment],
     }),
-  
+
     updateAssessmentSession: builder.mutation({
       query: ({ id, ...updatedData }) => ({
         url: `/assessment/${id}`,
@@ -54,7 +54,6 @@ const assessmentSessionApi = baseApi.injectEndpoints({
       invalidatesTags: [tagTypes.assessment],
     }),
 
-  
     addAnswerToSession: builder.mutation({
       query: ({ sessionId, answer }) => ({
         url: `/assessment/${sessionId}/answers`,
@@ -62,7 +61,7 @@ const assessmentSessionApi = baseApi.injectEndpoints({
         body: answer,
       }),
       invalidatesTags: [tagTypes.assessment],
- }),
+    }),
 
     completeAssessmentSession: builder.mutation({
       query: ({ sessionId, results }) => ({
@@ -70,19 +69,25 @@ const assessmentSessionApi = baseApi.injectEndpoints({
         method: "POST",
         body: { results },
       }),
-   invalidatesTags: [tagTypes.assessment],
+      invalidatesTags: [tagTypes.assessment],
     }),
-  }),
 
+     getUserAssessmentSessions: builder.query({
+      query: () => '/assessment/user',
+      providesTags: ['AssessmentSession'],
+    }),
+
+  }),
 });
 
 export const {
   useCreateAssessmentSessionMutation,
   useGetAllAssessmentSessionsQuery,
   useGetAssessmentSessionByIdQuery,
-  useGetAssessmentSessionsByUserQuery,
+  useGetAssessmentSessionsByUserMutation,
   useUpdateAssessmentSessionMutation,
   useDeleteAssessmentSessionMutation,
   useAddAnswerToSessionMutation,
   useCompleteAssessmentSessionMutation,
+  useGetUserAssessmentSessionsQuery,
 } = assessmentSessionApi;

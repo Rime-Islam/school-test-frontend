@@ -141,13 +141,13 @@ const PaginationWithButton = ({
             onChange={(e: ChangeEvent<HTMLInputElement>) =>
               setJumpPage(e.target.value)
             }
-            className="w-10 sm:w-16 px-2 py-1.5 border border-gray-300 border border-gray-300-gray-200 rounded-md"
+            className="w-10 sm:w-16 px-2 py-1.5 border border-gray-300 rounded-md"
             min={1}
             max={lastPage}
           />
           <button
             type="submit"
-            className="px-2.5 py-1.5 bg-accentColor text-white rounded-md hover:bg-gray-700"
+            className="px-2.5 py-1.5 bg-gray-500 text-white rounded-md hover:bg-gray-700"
           >
             Go
           </button>
