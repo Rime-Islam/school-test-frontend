@@ -17,27 +17,15 @@ This project is a language assessment platform with user roles (admin, student, 
 ## Tech Stack
 
 - Frontend: React, Tailwind CSS  
-- Backend: Node.js, Express.js, MongoDB (Mongoose)  
-- State Management: Redux Toolkit  
-- API: RESTful endpoints  
-- Deployment: [Add your deployment platform here]
 
 ---
 
 ## Getting Started Locally
 
-### Prerequisites
-
-- Node.js (v16 or higher recommended)  
-- npm or yarn package manager  
-- MongoDB instance (local or cloud, e.g., MongoDB Atlas)
-
----
-
 ### Clone the Repository
 
 ```bash
-git clone https://github.com/yourusername/your-repo-name.git
+git clone https://github.com/Rime-Islam/school-test-frontend.git
 ```
 ```bash
 cd your-repo-name
