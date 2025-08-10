@@ -6,7 +6,7 @@ const assessmentSessionApi = baseApi.injectEndpoints({
     createAssessmentSession: builder.mutation({
       query: (sessionData) => ({
         url: "/assessment",
-        method: "POST",
+        method: "PATCH",
         body: sessionData,
       }),
       invalidatesTags: [tagTypes.assessment],

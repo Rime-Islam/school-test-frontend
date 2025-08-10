@@ -46,7 +46,7 @@ export default function AssessmentPage() {
 
   const hasExistingAssessments =
     assessments?.data && assessments?.data?.length > 0;
-
+console.log(assessments?.data[0].answers.length)
   return (
     <div>
       <div>
@@ -83,10 +83,14 @@ export default function AssessmentPage() {
             <div className="alert alert-error">Error loading questions</div>
           )}
 
+{
+  assessments?.data[0].answers.length && (
+    <div>Process my result</div>
+  )
+}
           {hasExistingAssessments && !isQuestionsLoading && !questionsError && (
             <AssessmentCard
               currentStep={currentStep}
-              answers={assessments?.data?.answers}
               questions={data?.data}
             />
           )}

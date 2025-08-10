@@ -1,83 +1,135 @@
 import { useCallback, useEffect, useState } from "react";
-import type { AssessmentCardProps, IAssessmentAnswer } from "../../interface/assessment.interface";
-
+import type {
+  AssessmentCardProps,
+  IAssessmentAnswer,
+} from "../../interface/assessment.interface";
+import { loadFromStorage, saveToStorage } from "../../utils/localStorage";
+import { useCreateAssessmentSessionMutation } from "../../redux/features/assessment/assessmentApi";
 
 const AssessmentCard = ({
   currentStep,
-  answers,
   questions = [],
 }: AssessmentCardProps) => {
-  const [timeLeft, setTimeLeft] = useState(60);
-  const [selectedOption, setSelectedOption] = useState<string | null>(null);
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+      const [createAssessmentSession] = useCreateAssessmentSessionMutation();
+
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(() =>
+    loadFromStorage("assessment_currentQuestionIndex", 0)
+  );
+  const [userAnswers, setUserAnswers] = useState<IAssessmentAnswer[]>(() =>
+    loadFromStorage("assessment_userAnswers", [])
+  );
+
+  // Other states don't need persistence
+  const [timeLeft, setTimeLeft] = useState(() =>
+    loadFromStorage("assessment_timeLeft", 60)
+  );
+  const [selectedOption, setSelectedOption] = useState<string | null>(() =>
+    loadFromStorage("assessment_selectedOption", null)
+  );
   const [showCorrectAnswer, setShowCorrectAnswer] = useState(false);
-  const [userAnswers, setUserAnswers] = useState<IAssessmentAnswer[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
+
   const currentQuestion = questions[currentQuestionIndex];
 
   useEffect(() => {
-    console.log("Updated answers:", userAnswers);
-  }, [userAnswers]);
+    saveToStorage("assessment_currentQuestionIndex", currentQuestionIndex);
+  }, [currentQuestionIndex]);
+
+useEffect(() => {
+
+  if (questions.length > userAnswers.length  ) {
+    saveToStorage("assessment_userAnswers", userAnswers);
+  }
+}, [userAnswers, questions.length]);
+
+  useEffect(() => {
+    saveToStorage("assessment_timeLeft", timeLeft);
+  }, [timeLeft]);
+
+  useEffect(() => {
+    saveToStorage("assessment_selectedOption", selectedOption);
+  }, [selectedOption]);
 
   const saveCurrentAnswer = useCallback(() => {
-    if (currentQuestion) {
-      const newAnswer: IAssessmentAnswer = {
-        questionId: currentQuestion._id, 
-        selectedAnswer: selectedOption || '', // Empty string if no answer selected
-        isCorrect: selectedOption ? 
-          currentQuestion.options.find(opt => opt.text === selectedOption)?.isCorrect || false 
-          : false // false if no answer selected
-      };
+    if (!currentQuestion) return;
 
-      setUserAnswers(prev => {
-        // Check if answer already exists for this question
-        const existingIndex = prev.findIndex(a => a.questionId === newAnswer.questionId);
-        if (existingIndex >= 0) {
-          const updated = [...prev];
-          updated[existingIndex] = newAnswer;
-          return updated;
-        }
-        return [...prev, newAnswer];
-      });
-    }
+    const newAnswer: IAssessmentAnswer = {
+      questionId: currentQuestion._id,
+      selectedAnswer: selectedOption || "",
+      isCorrect: selectedOption
+        ? currentQuestion.options.find((opt) => opt.text === selectedOption)
+            ?.isCorrect || false
+        : false,
+    };
+
+    setUserAnswers((prev) => {
+      const existingIndex = prev.findIndex(
+        (a) => a.questionId === newAnswer.questionId
+      );
+      if (existingIndex >= 0) {
+        const updated = [...prev];
+        updated[existingIndex] = newAnswer;
+        return updated;
+      }
+      return [...prev, newAnswer];
+    });
   }, [currentQuestion, selectedOption]);
 
   const handleNextQuestion = useCallback(() => {
     setIsProcessing(true);
-    
-    // Save current answer (will handle both answered and unanswered cases)
     saveCurrentAnswer();
 
-    if (currentQuestionIndex < questions.length - 1) {
-      setCurrentQuestionIndex(prev => prev + 1);
+    if (currentQuestionIndex < questions.length -1 ) {
+      setCurrentQuestionIndex((prev) => prev + 1);
       setSelectedOption(null);
       setTimeLeft(60);
       setShowCorrectAnswer(false);
-    } else {
-      console.log("Final answers:", userAnswers);
-      // Here you would typically send userAnswers to your backend
     }
-
     setIsProcessing(false);
   }, [currentQuestionIndex, questions.length, saveCurrentAnswer, userAnswers]);
-
-  // Timer effect
-  useEffect(() => {
-    if (timeLeft > 0) {
-      const timer = setTimeout(() => setTimeLeft(prev => prev - 1), 1000);
-      return () => clearTimeout(timer);
-    } else {
-      // Time's up - save empty answer and move to next question
-      setShowCorrectAnswer(true);
-      setTimeout(handleNextQuestion, 1000); // Small delay to show correct answer
-    }
-  }, [timeLeft, handleNextQuestion]);
 
   const handleOptionSelect = (optionText: string) => {
     setSelectedOption(optionText);
     setShowCorrectAnswer(true);
   };
+  // Timer effect
+  useEffect(() => {
+    if (timeLeft > 0) {
+      const timer = setTimeout(() => setTimeLeft((prev) => prev - 1), 1000);
+      return () => clearTimeout(timer);
+    } else {
+      handleNextQuestion();
+    }
+  }, [timeLeft, handleNextQuestion]);
 
+const handleFinishAssessment = async () => {
+  if (!userAnswers || userAnswers.length === 0) return;
+   setIsProcessing(true);
+    saveCurrentAnswer();
+  try {
+    const res = await createAssessmentSession(userAnswers).unwrap();
+    console.log('Submission result:', res.success);
+
+    // Only clear storage if the submission was successful
+    if (res?.success) {
+        setIsProcessing(false)
+
+      localStorage.removeItem("assessment_userAnswers");
+      localStorage.removeItem("assessment_currentQuestionIndex");
+      localStorage.removeItem("assessment_selectedOption");
+      localStorage.removeItem("assessment_showCorrectAnswer");
+      
+
+      localStorage.removeItem("assessment_timeLeft");
+      
+     location.reload();
+    }
+
+  } catch (error) {
+    console.error('Assessment submission failed:', error);
+    // Optionally keep the data in localStorage for retry
+  }
+};
 
   if (!currentQuestion) {
     return (
@@ -92,7 +144,6 @@ const AssessmentCard = ({
 
   return (
     <div className="min-h-screen bg-gray-50 p-6 flex justify-center relative">
-
       <div className="max-w-2xl w-full">
         {/* Title & Instructions */}
         <h1 className="text-2xl font-bold mb-1">Assessment</h1>
@@ -104,14 +155,12 @@ const AssessmentCard = ({
         {/* Step & Timer */}
         <div className="bg-white border rounded-lg p-4 mb-6">
           <div className="flex justify-between items-center mb-2">
-         <div className="font-medium flex gap-5">
-            <span>
-                Step {currentStep}
-            </span>
-               <span >
-              Question {currentQuestionIndex + 1} of {questions.length}
-            </span>
-         </div>
+            <div className="font-medium flex gap-5">
+              <span>Step {currentStep}</span>
+              <span>
+                Question {currentQuestionIndex + 1} of {questions.length}
+              </span>
+            </div>
             <span className="bg-gray-100 px-3 py-1 rounded text-sm font-semibold">
               {timeLeft}s
             </span>
@@ -120,7 +169,9 @@ const AssessmentCard = ({
             <div
               className="bg-emerald-500 h-2 rounded-full"
               style={{
-                width: `${((currentQuestionIndex + 1) / questions.length) * 100}%`,
+                width: `${
+                  ((currentQuestionIndex + 1) / questions?.length) * 100
+                }%`,
               }}
             ></div>
           </div>
@@ -128,25 +179,24 @@ const AssessmentCard = ({
 
         {/* Question Card */}
         <div className="bg-white border rounded-lg p-6 shadow-sm">
-          {/* Category & Level */}
           <p className="text-sm text-gray-500 mb-1">
-            {currentQuestion.competency.toUpperCase()} • Level{" "}
-            {currentQuestion.level}
+            {currentQuestion?.competency?.toUpperCase()} • Level{" "}
+            {currentQuestion?.level}
           </p>
-          <h2 className="text-lg font-medium mb-4">{currentQuestion.text}</h2>
+          <h2 className="text-lg font-medium mb-4">{currentQuestion?.text}</h2>
 
           {/* Options */}
           <div className="space-y-3">
-            {currentQuestion.options.map((option) => {
-              const isSelected = selectedOption === option.text;
-              const isCorrectOption = option.isCorrect;
+            {currentQuestion?.options?.map((option) => {
+              const isSelected = selectedOption === option?.text;
+              const isCorrectOption = option?.isCorrect;
               const showAsCorrect = showCorrectAnswer && isCorrectOption;
               const showAsIncorrect =
                 showCorrectAnswer && isSelected && !isCorrectOption;
 
               return (
                 <label
-                  key={option.text}
+                  key={option?.text}
                   className={`flex items-center border rounded-lg px-4 py-2 cursor-pointer transition ${
                     isSelected
                       ? showAsIncorrect
@@ -160,9 +210,9 @@ const AssessmentCard = ({
                   <input
                     type="radio"
                     name="answer"
-                    value={option.text}
+                    value={option?.text}
                     checked={isSelected}
-                    onChange={() => handleOptionSelect(option.text)}
+                    onChange={() => handleOptionSelect(option?.text)}
                     className="mr-3"
                     disabled={showCorrectAnswer}
                   />
@@ -179,18 +229,33 @@ const AssessmentCard = ({
           </div>
         </div>
 
-        <div className="flex justify-end items-center mt-4">
-          <button
-            className={`px-4 py-2 rounded text-white transition ${
-              selectedOption
-                ? "bg-emerald-600 hover:bg-emerald-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 focus-visible:ring-offset-2"
-                : "bg-gray-400 cursor-not-allowed"
-            }`}
-            onClick={handleNextQuestion}
-            disabled={!selectedOption}
-          >
-            {currentQuestionIndex < questions.length - 1 ? "Next Question" : "Finish Assessment"}
-          </button>
+        <div className="flex justify-end mt-4">
+          {currentQuestionIndex < questions.length - 1 ? (
+            <button
+              className={`px-4 py-2 rounded text-white transition ${
+                selectedOption
+                  ? "bg-emerald-600 hover:bg-emerald-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 focus-visible:ring-offset-2"
+                  : "bg-gray-400 cursor-not-allowed"
+              }`}
+              onClick={handleNextQuestion}
+              disabled={!selectedOption}
+            >
+              Next Question
+            </button>
+          ):   <button
+             onClick={handleFinishAssessment}
+              className={`px-4 py-2 rounded text-white transition ${
+                selectedOption
+                  ? "bg-emerald-600 hover:bg-emerald-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 focus-visible:ring-offset-2"
+                  : "bg-gray-400 cursor-not-allowed"
+              }
+              `
+            }
+            >
+              Finish Assessment
+            </button>
+            }
+        
         </div>
       </div>
     </div>
