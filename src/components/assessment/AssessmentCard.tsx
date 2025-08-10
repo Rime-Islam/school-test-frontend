@@ -28,7 +28,7 @@ const AssessmentCard = ({
   );
   const [showCorrectAnswer, setShowCorrectAnswer] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
-
+console.log(isProcessing)
   const currentQuestion = questions[currentQuestionIndex];
 
   useEffect(() => {

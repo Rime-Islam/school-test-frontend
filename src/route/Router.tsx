@@ -15,6 +15,7 @@ import CreateQuestion from "../pages/admin/question/CreateQuestion";
 import AllQuestion from "../pages/admin/question/AllQuestion";
 import EditQuestion from "../components/question/EditQuestion";
 import AssessmentPage from "../pages/student/assessment/Assessment";
+import Certificate from "../pages/student/certificate/Certificate";
 
 const router = createBrowserRouter([
   {
@@ -62,6 +63,10 @@ const router = createBrowserRouter([
       {
         path: "/student/dashboard/assessment",
         element: <AssessmentPage />,
+      },
+      {
+        path: "/student/dashboard/certificate",
+        element: <Certificate />,
       },
     ],
   },

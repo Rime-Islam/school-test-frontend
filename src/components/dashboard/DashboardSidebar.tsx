@@ -12,11 +12,11 @@ const roleBasedItems = {
   ],
   admin: [
     { label: "Overview", href: "/admin/dashboard", icon: "Home", active: true },
-    { label: "Users", href: "/admin/dashboard/user", icon: "Users" },
+    // { label: "Users", href: "/admin/dashboard/user", icon: "Users" },
      { label: "All Question", href: "/admin/dashboard/questions", icon: "BarChart3" },
     { label: "Create Question", href: "/admin/dashboard/create-question", icon: "Layers" },
     { label: "Change Password", href: "/admin/dashboard/change-password", icon: "BadgeCheck" },
-    { label: "Admin Tools", href: "/admin/dashboard", icon: "Tool" },
+    // { label: "Admin Tools", href: "/admin/dashboard", icon: "Tool" },
     { label: "Settings", href: "/admin/dashboard", icon: "Settings" },
   ],
   supervisor: [
